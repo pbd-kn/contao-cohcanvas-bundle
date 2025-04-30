@@ -1,0 +1,38 @@
+{
+  "name": "pbd-kn/contao-cohcanvas-bundle",  
+  "description": "Contao-Modul zur Darstellung von Sensorwerten per Chart.js und AJAX",
+  "type": "contao-bundle",
+  "keywords": [
+    "contao",
+    "chart",
+    "canvas",
+    "sensor",
+    "ajax",
+    "chartjs"
+  ],
+  "license": "GPL-3.0-or-later",  
+  "authors": [
+        {
+            "name": "Peter Broghammer",
+            "email": "pb-contao@gmx.de",
+            "homepage": "https://pb-broghammer.de",
+            "role": "Developer"
+        }
+  ],
+  "require": {
+    "php": "^8.1",
+    "contao/core-bundle": "^4.13 || ^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "PbdKn\\ContaoCohCanvasBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "PbdKn\\ContaoCohCanvasBundle\\ContaoManager\\Plugin"
+  },
+  "support": {
+    "issues": "https://github.com/deinname/contao-cohcanvas-bundle/issues",
+    "source": "https://github.com/deinname/contao-cohcanvas-bundle"
+  }
+}

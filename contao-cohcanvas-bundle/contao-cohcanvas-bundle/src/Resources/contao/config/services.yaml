@@ -1,5 +1,5 @@
 services:
-  PbdKn\ContaoCohCanvasBundle\Element\CohCanvasElement:
+  PbdKn\ContaoCohCanvasBundle\ContentElement\CohCanvasElement:
     tags: ['contao.content_element']
 
   PbdKn\ContaoCohCanvasBundle\Controller\CanvasChartDataController:
