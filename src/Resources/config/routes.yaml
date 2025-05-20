@@ -1,0 +1,4 @@
+pbdkn_coh.canvas.controller:
+    resource: ../../Controller
+    type: annotation
+    

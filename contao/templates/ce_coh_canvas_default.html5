@@ -6,18 +6,19 @@
     <option value="1m">1 Monat</option>
   </select>
 
-  <canvas id="<?= \$this->chartId ?>"></canvas>
+  <canvas id="<?= $this->chartId ?>"></canvas>
 
-  <script src="/bundles/contaocohcanvas/js/chart.min.js"></script>
-  <script src="/bundles/contaocohcanvas/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script src="/bundles/pbdcontaocohcanvas/js/chart.min.js"></script>
+  <script src="/bundles/pbdcontaocohcanvas/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const chartId = "<?= \$this->chartId ?>";
-      const ajaxUrl = "<?= \$this->ajaxUrl ?>";
+      const chartId = "<?= $this->chartId ?>";
+      const ajaxUrl = "<?= $this->ajaxUrl ?>";
       let myChart;
 
       function loadChart(range) {
-        fetch(`${ajaxUrl}?range=${range}`)
+        fetch(ajaxUrl + '?range=' + range)
           .then(r => r.json())
           .then(data => {
             const ctx = document.getElementById(chartId).getContext("2d");

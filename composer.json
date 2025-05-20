@@ -31,6 +31,15 @@
   "extra": {
     "contao-manager-plugin": "PbdKn\\ContaoCohCanvasBundle\\ContaoManager\\Plugin"
   },
+  "config": {
+      "allow-plugins": {
+        "contao-components/installer": false,
+        "contao/manager-plugin": false,
+        "contao-community-alliance/composer-plugin": true,
+        "php-http/discovery": true
+      }
+    },
+  
   "support": {
     "issues": "https://github.com/deinname/contao-cohcanvas-bundle/issues",
     "source": "https://github.com/deinname/contao-cohcanvas-bundle"

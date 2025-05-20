@@ -1,52 +1,145 @@
 <div class="coh-canvas-chart">
-  <label for="rangeSelect">Zeitraum:</label>
-  <select id="rangeSelect">
-    <option value="1d">Seit gestern</option>
-    <option value="1w">1 Woche</option>
-    <option value="1m">1 Monat</option>
-  </select>
 
-  <canvas id="<?= \$this->chartId ?>"></canvas>
+  <!-- Range-Auswahl -->
+  <form method="get">
+    <label for="rangeSelect">Zeitraum:</label>
+    <select name="range" id="rangeSelect" onchange="this.form.submit()">
+      <option value="1d" <?= ($this->range ?? '1d') === '1d' ? 'selected' : '' ?>>Seit gestern</option>
+      <option value="1w" <?= $this->range === '1w' ? 'selected' : '' ?>>1 Woche</option>
+      <option value="1m" <?= $this->range === '1m' ? 'selected' : '' ?>>1 Monat</option>
+    </select>
+  </form>
 
-  <script src="/bundles/contaocohcanvas/js/chart.min.js"></script>
-  <script src="/bundles/contaocohcanvas/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <!-- Ausgewählte Sensoren -->
+  <?php if (!empty($this->selectedSensors)): ?>
+    <p><strong>Sensoren:</strong></p>
+    <ul>
+      <?php foreach ($this->selectedSensors as $sensor): ?>
+        <li><?= $sensor ?></li>
+      <?php endforeach; ?>
+    </ul>
+  <?php else: ?>
+    <p><em>Keine Sensoren ausgewählt.</em></p>
+  <?php endif; ?>
 
+  <!-- Canvas -->
+  <canvas id="<?= $this->chartId ?>" width="800" height="400"></canvas>
+
+  <!-- Chart.js + Luxon -->
+  <?php if (!isset($GLOBALS['CHART_JS_LOADED'])): ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+    <?php $GLOBALS['CHART_JS_LOADED'] = true; ?>
+  <?php endif; ?>
+
+  <!-- Chart Initialisierung -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const chartId = "<?= \$this->chartId ?>";
-      const ajaxUrl = "<?= \$this->ajaxUrl ?>";
-      let myChart;
+      const chartData = <?= $this->chartdata ?>;
+      const ctx = document.getElementById("<?= $this->chartId ?>").getContext("2d");
 
-      function loadChart(range) {
-        fetch(`${ajaxUrl}?range=${range}`)
-          .then(r => r.json())
-          .then(data => {
-            const ctx = document.getElementById(chartId).getContext("2d");
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-              type: 'line',
-              data: data,
-              options: {
-                responsive: true,
-                scales: {
-                  x: { type: 'time', time: { unit: 'day' } }
-                },
-                plugins: {
-                  title: {
-                    display: true,
-                    text: 'Sensorwerte über Zeit'
-                  }
-                }
-              }
-            });
-          });
+      const axes = chartData.axes ?? {};
+      const scales = {
+        x: {
+          type: 'time',
+          time: { unit: 'day' },
+          title: { display: true, text: 'Zeit' }
+        }
+      };
+
+      let useLeft = true;
+      for (const [axisId, info] of Object.entries(axes)) {
+        const unit = info.unit || '';
+        const color = info.color || '#000';
+
+        scales[axisId] = {
+          position: useLeft ? 'left' : 'right',
+          title: {
+            display: true,
+            text: unit,
+            color: color
+          },
+          ticks: {
+            color: color,
+            callback: val => unit !== 'default' ? `${val} ${unit}` : val
+          },
+          grid: {
+            drawOnChartArea: useLeft
+          }
+        };
+
+        useLeft = !useLeft;
       }
 
-      document.getElementById("rangeSelect").addEventListener("change", e => {
-        loadChart(e.target.value);
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: chartData.datasets
+        },
+        options: {
+          responsive: true,
+          interaction: {
+            mode: 'nearest',
+            intersect: false
+          },
+          scales: scales,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              align: 'start',
+              labels: {
+                generateLabels: function (chart) {
+                  return chart.data.datasets.map((ds, i) => {
+                    const label = ds.label.length > 15 ? ds.label.slice(0, 15) + '…' : ds.label;
+                    return {
+                      text: label,
+                      fillStyle: ds.borderColor,
+                      strokeStyle: ds.borderColor,
+                      hidden: !chart.isDatasetVisible(i),
+                      datasetIndex: i
+                    };
+                  });
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Sensorwerte über Zeit'
+            },
+            tooltip: {
+              titleColor: 'blue',
+              backgroundColor: 'white',
+              bodyColor: 'blue',
+              borderColor: 'green',
+              borderWidth: 2,
+              cornerRadius: 4,
+              padding: 10,
+              displayColors: true,
+              titleFont: {
+                  weight: 'bold',
+                  size: 14,
+                  family: 'Arial'
+              },
+              bodyFont: {
+                  size: 13,
+                  family: 'Courier New'
+              },
+              callbacks: {
+                label: function (context) {
+                  const label = context.dataset.label || '';
+                  const value = context.parsed.y;
+                  const axisId = context.dataset.yAxisID;
+                  const unit = chartData.axes?.[axisId]?.unit || '';
+                  return `${label}: ${value}${unit !== 'default' ? ' ' + unit : ''}`;
+                }
+              }
+            }
+          }
+        }
       });
-
-      loadChart("1d");
     });
   </script>
 </div>

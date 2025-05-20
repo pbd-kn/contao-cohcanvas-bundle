@@ -7,4 +7,3 @@ services:
   PbdKn\ContaoCohCanvasBundle\:
     resource: '../../*'
     exclude: '../../{DependencyInjection,public,Tests}'
-

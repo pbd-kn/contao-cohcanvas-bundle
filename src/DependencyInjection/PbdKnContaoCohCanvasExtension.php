@@ -1,5 +1,5 @@
 <?php
-// src/DependencyInjection/ContaoCohCanvasExtension.php
+// src/DependencyInjection/PbdKnContaoCohCanvasExtension.php
 namespace PbdKn\ContaoCohCanvasBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
-class ContaoCohCanvasExtension extends Extension
+class PbdKnContaoCohCanvasExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {

@@ -24,12 +24,12 @@ class Plugin implements BundlePluginInterface
                 ]),
         ];
     }
-/*
+
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel): ?RouteCollection
     {
         return $resolver
             ->resolve(__DIR__.'/../Resources/config/routes.yaml')
             ->load(__DIR__.'/../Resources/config/routes.yaml');
     }
-*/
+
 }
